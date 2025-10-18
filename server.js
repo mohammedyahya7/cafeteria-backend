@@ -7,23 +7,28 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// Initialize Stripe with your secret key from .env file
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// --- ROUTE 1: Create connection token (for your iPad app) ---
+// Root route for testing
+app.get("/", (req, res) => {
+  res.send("☕ Cafeteria Backend is running!");
+});
+
+// Create connection token
 app.post("/connection_token", async (req, res) => {
   try {
     const token = await stripe.terminal.connectionTokens.create();
     res.json({ secret: token.secret });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// --- ROUTE 2: Create payment intent (for a specific amount) ---
+// Create payment intent (amount in pence for GBP)
 app.post("/create_payment_intent", async (req, res) => {
   try {
-    const { amount } = req.body; // amount in cents
+    const { amount } = req.body;
     const intent = await stripe.paymentIntents.create({
       amount,
       currency: "gbp",
@@ -31,6 +36,7 @@ app.post("/create_payment_intent", async (req, res) => {
     });
     res.json({ client_secret: intent.client_secret });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
