@@ -11,7 +11,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Root route for testing
 app.get("/", (req, res) => {
-  res.send("☕ Cafeteria Backend is running!");
+  res.send("I love you my bella Sofia scoriga");
 });
 
 // Create connection token
